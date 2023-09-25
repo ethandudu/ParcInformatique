@@ -1,7 +1,14 @@
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Scanner;
 
-public class ParcInformatique {
+public class ParcInformatique{
     private String Name;
     private ArrayList <Materiel> MaterielList;
 
@@ -62,11 +69,44 @@ public class ParcInformatique {
         }
     }
     public void exportparc(){
-        // TODO
+        FileOutputStream fos;
+        ObjectOutputStream oos;
+        try {
+            fos = new FileOutputStream("parc.txt");
+            oos = new ObjectOutputStream(fos);
+            for (int i = 0; i < this.MaterielList.size(); i++) {
+                oos.writeObject(this.MaterielList.get(i).export());
+            }
+            oos.flush();
+            oos.close();
+            fos.close();
+            System.out.println("Parc informatique exporté avec succès");
+        } catch (Exception e) {
+            System.out.println(e);
+        }
     }
 
-    public void importparc(){
-        // TODO
+    public void importparc() throws IOException{
+        FileInputStream fis = new FileInputStream("parc.txt");
+        ObjectInputStream ois = new ObjectInputStream(fis);
+        try {
+            while (true) {
+                String line = (String) ois.readObject();
+                System.out.println(line);
+                int SN = Integer.parseInt(line.split(";")[0]);
+                String type = line.split(";")[1];
+                // TODO
+                if (type == "Ordinateur"){
+
+                } else if (type == "Switch"){
+                    
+                } else if (type == "Telephone"){
+                    
+                }
+            }
+        } catch (Exception e) {}
+        ois.close();
+        fis.close();
     }
 
     public static void main(String[] args) throws Exception {
@@ -130,9 +170,9 @@ public class ParcInformatique {
                     int SN = s.nextInt();
                     parc.Search(SN);
                 } else if (choix == 6){
-
+                    parc.exportparc();
                 } else if (choix == 7){
-
+                    parc.importparc();
                 }
                 System.out.println("Merci de taper votre choix parmi la sélection suivante :");
                 System.out.println("1 - Modifier le nom du parc \n2 - Ajouter un matériel \n3 - Supprimer un matériel \n4 - Afficher le parc informatique \n5 - Rechercher un matériel \n6 - Exporter le parc informatique \n7 - Importer un parc informatique");

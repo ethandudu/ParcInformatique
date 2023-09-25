@@ -18,4 +18,7 @@ public class Ordinateur extends Materiel {
         System.out.println("Type: Ordinateur SN: " + getSN() + " OS: " + OS + " CPU: " + CPU + " RAM: " + RAM + "Go GPU: " + GPU);
     }
     
+    public String export(){
+        return getSN() + ";" + getType() + ";" + OS + ";" + CPU + ";" + RAM + ";" + GPU;
+    }
 }

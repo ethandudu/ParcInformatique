@@ -1,4 +1,6 @@
-public class Materiel {
+import java.io.Serializable;
+
+public class Materiel implements Serializable{
 
     private Integer SN;
     private String type;
@@ -26,5 +28,9 @@ public class Materiel {
 
     public void Affiche(){
         System.out.println("Materiel: " + SN);
+    }
+
+    public String export(){
+        return SN + ";" + type;
     }
 }

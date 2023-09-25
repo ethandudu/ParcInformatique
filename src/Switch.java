@@ -10,4 +10,7 @@ public class Switch extends Materiel {
         System.out.println("Type: Switch SN: "+this.getSN()+" Nb Ports Ethernet: "+PortsEthernet);
     }
     
+    public String export(){
+        return getSN() + ";" + getType() + ";" + PortsEthernet;
+    }
 }

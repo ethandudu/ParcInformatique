@@ -10,4 +10,7 @@ public class Telephone extends Materiel {
         System.out.println("Type: Telephone SN: "+this.getSN()+" OS: "+OS);
     }
     
+    public String export(){
+        return getSN() + ";" + getType() + ";" + OS;
+    }
 }
