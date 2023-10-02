@@ -74,9 +74,11 @@ public class ParcInformatique{
         try {
             fos = new FileOutputStream("parc.txt");
             oos = new ObjectOutputStream(fos);
+            oos.writeObject(this.Name);
             for (int i = 0; i < this.MaterielList.size(); i++) {
                 oos.writeObject(this.MaterielList.get(i).export());
             }
+            oos.writeObject("EOF");
             oos.flush();
             oos.close();
             fos.close();
@@ -89,22 +91,30 @@ public class ParcInformatique{
     public void importparc() throws IOException{
         FileInputStream fis = new FileInputStream("parc.txt");
         ObjectInputStream ois = new ObjectInputStream(fis);
+        
         try {
+            String[] namepart = ((String) ois.readObject()).split(";");
+            this.Name = namepart[0];
             while (true) {
                 String line = (String) ois.readObject();
-                System.out.println(line);
-                int SN = Integer.parseInt(line.split(";")[0]);
-                String type = line.split(";")[1];
-                // TODO
-                if (type == "Ordinateur"){
-
-                } else if (type == "Switch"){
-                    
-                } else if (type == "Telephone"){
-                    
+                if (line.equals("EOF")) {
+                    break;
+                }
+                String[] parts = line.split(";");
+                if (parts[1].equals("Ordinateur")) {
+                    Materiel Ordi = new Ordinateur(Integer.parseInt(parts[0]), parts[2], parts[3], Integer.parseInt(parts[4]), parts[5]);
+                    this.MaterielList.add(Ordi);
+                } else if (parts[1].equals("Switch")) {
+                    Materiel Switch = new Switch(Integer.parseInt(parts[0]), Integer.parseInt(parts[2]));
+                    this.MaterielList.add(Switch);
+                } else if (parts[1].equals("Telephone")) {
+                    Materiel Tel = new Telephone(Integer.parseInt(parts[0]), parts[2]);
+                    this.MaterielList.add(Tel);
                 }
             }
-        } catch (Exception e) {}
+        } catch (Exception e) {
+            
+        }
         ois.close();
         fis.close();
     }
