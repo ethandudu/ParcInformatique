@@ -11,6 +11,6 @@ public class Telephone extends Materiel {
     }
     
     public String export(){
-        return getSN() + ";" + getType() + ";" + OS;
+        return getType() + ";" + getSN() + ";" + OS;
     }
 }

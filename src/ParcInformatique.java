@@ -8,17 +8,46 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Scanner;
 
+//SQL
+import java.sql.Statement;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.PreparedStatement;
+
+
 public class ParcInformatique{
     private String Name;
     private ArrayList <Materiel> MaterielList;
+    private Connection connexion;
+
+
+    public Connection getConnexion(){
+        return connexion;
+    }
 
     public ParcInformatique(){
         this.MaterielList = new ArrayList<Materiel>();
+
+        try {
+            String url = "jdbc:sqlite:parc.db";
+            connexion = DriverManager.getConnection(url);
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+        }
     }
 
     public ParcInformatique(String Name){
         this.Name = Name;
         this.MaterielList = new ArrayList<Materiel>();
+
+    try {
+        String url = "jdbc:sqlite:parc.db";
+        connexion = DriverManager.getConnection(url);
+    } catch (SQLException e) {
+        System.out.println(e.getMessage());
+    }
 
     }
 
@@ -119,6 +148,63 @@ public class ParcInformatique{
         fis.close();
     }
 
+    public void initBase(String filename){
+        Statement s;
+        String sql;
+        try {
+            s = connexion.createStatement();
+            sql = "CREATE TABLE IF NOT EXISTS parc (Name VARCHAR(255))";
+            s.executeUpdate(sql);
+            sql = "CREATE TABLE IF NOT EXISTS ordinateurs (SN INT, OS VARCHAR(255), CPU VARCHAR(255), RAM INT, GPU VARCHAR(255))";
+            s.executeUpdate(sql);
+            sql = "CREATE TABLE IF NOT EXISTS switches (SN INT, ports INT)";
+            s.executeUpdate(sql);
+            sql = "CREATE TABLE IF NOT EXISTS telephones (SN INT, OS VARCHAR(255))";
+            s.executeUpdate(sql);
+        } catch (SQLException e) {
+            System.out.println(e);
+        }
+    }
+
+    public void insertIntoDb(String type, String[] values){
+        PreparedStatement s;
+        String sql;
+        try {
+            if (type.equals("Ordinateur")) {
+                sql = "INSERT INTO ordinateurs (SN, OS, CPU, RAM, GPU) VALUES (?, ?, ?, ?, ?)";
+                s = connexion.prepareStatement(sql);
+                s.setInt(1, Integer.parseInt(values[1]));
+                s.setString(2, values[2]);
+                s.setString(3, values[3]);
+                s.setInt(4, Integer.parseInt(values[4]));
+                s.setString(5, values[5]);
+                s.executeUpdate();
+            } else if (type.equals("Switch")) {
+                sql = "INSERT INTO switches (SN, ports) VALUES (?, ?)";
+                s = connexion.prepareStatement(sql);
+                s.setInt(1, Integer.parseInt(values[1]));
+                s.setInt(2, Integer.parseInt(values[2]));
+                s.executeUpdate();
+            } else if (type.equals("Telephone")) {
+                sql = "INSERT INTO telephones (SN, OS) VALUES (?, ?)";
+                s = connexion.prepareStatement(sql);
+                s.setInt(1, Integer.parseInt(values[1]));
+                s.setString(2, values[2]);
+                s.executeUpdate();
+            }
+        } catch (SQLException e) {
+            System.out.println(e);
+        }
+    }
+
+    public void sauverSQL(ParcInformatique parc, String filename){
+        parc.initBase(filename);
+        for (int i = 0; i < parc.MaterielList.size(); i++) {
+            String[] values = parc.MaterielList.get(i).export().split(";");
+            parc.insertIntoDb(parc.MaterielList.get(i).getType(), values);
+        }        
+    }
+
     public static void main(String[] args) throws Exception {
         ParcInformatique parc = new ParcInformatique();
         Scanner s;
@@ -183,6 +269,8 @@ public class ParcInformatique{
                     parc.exportparc();
                 } else if (choix == 7){
                     parc.importparc();
+                } else if (choix == 8){
+                    parc.sauverSQL(parc, "parc.db");                    
                 }
                 System.out.println("Merci de taper votre choix parmi la sélection suivante :");
                 System.out.println("1 - Modifier le nom du parc \n2 - Ajouter un matériel \n3 - Supprimer un matériel \n4 - Afficher le parc informatique \n5 - Rechercher un matériel \n6 - Exporter le parc informatique \n7 - Importer un parc informatique");

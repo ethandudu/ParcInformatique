@@ -19,6 +19,6 @@ public class Ordinateur extends Materiel {
     }
     
     public String export(){
-        return getSN() + ";" + getType() + ";" + OS + ";" + CPU + ";" + RAM + ";" + GPU;
+        return getType() + ";" + getSN() +  ";" + OS + ";" + CPU + ";" + RAM + ";" + GPU;
     }
 }

@@ -11,6 +11,6 @@ public class Switch extends Materiel {
     }
     
     public String export(){
-        return getSN() + ";" + getType() + ";" + PortsEthernet;
+        return getType() + ";" + getSN() + ";" + PortsEthernet;
     }
 }
